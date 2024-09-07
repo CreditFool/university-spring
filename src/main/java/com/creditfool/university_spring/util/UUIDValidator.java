@@ -7,7 +7,7 @@ public class UUIDValidator {
     private UUIDValidator() {
     }
 
-    public static Boolean isValid(String uuid) {
+    public static boolean isValid(String uuid) {
         try {
             UUID.fromString(uuid);
             return true;
