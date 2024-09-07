@@ -34,6 +34,10 @@ class TeacherTest {
     @Test
     void testEquals() {
         assertEquals(true, teacherA.equals(teacherA));
+        assertEquals(teacherA, teacherA);
+
+        Teacher teacherB = new Teacher(id, firstName, lastName, nip, address, phone, email, null);
+        assertEquals(true, teacherA.equals(teacherB));
     }
 
     @Test
