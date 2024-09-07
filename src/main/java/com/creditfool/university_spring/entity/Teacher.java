@@ -9,8 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,26 +25,21 @@ public class Teacher {
     @Column(unique = true, nullable = false)
     private UUID id;
 
-    @NotEmpty
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @Column(name = "last_name")
     private String lastName;
 
-    @NotEmpty
     @Column(nullable = false)
     private String nip;
 
-    @NotEmpty
     @Column(nullable = false)
     private String address;
 
-    @NotEmpty
     @Column(nullable = false)
     private String phone;
 
-    @Email
     @Column(nullable = false)
     private String email;
 
