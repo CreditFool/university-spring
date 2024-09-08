@@ -113,6 +113,9 @@ public class TeacherServiceImpl implements TeacherService {
     private void validateTeacherData(TeacherDto teacherDto) {
         List<Teacher> activeTeacher = getAllTeacher(true);
         for (Teacher teacher : activeTeacher) {
+            if (teacher.getId().equals(teacherDto.id())) {
+                continue;
+            }
             if (teacher.getNip().equals(teacherDto.nip())) {
                 throw new DataAlreadyExistException("Teacher with same NIP already exist");
             }
