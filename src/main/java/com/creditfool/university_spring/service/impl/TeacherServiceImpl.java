@@ -33,7 +33,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void deleteTeacher(String id) {
-        Teacher teacher = getTeacherById(id);
+        Teacher teacher = getTeacherById(id, false);
         teacher.setIsActive(false);
         repository.save(teacher);
     }
@@ -41,7 +41,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public void deleteTeacher(String id, boolean isHardDelete) {
         if (isHardDelete) {
-            Teacher teacher = getTeacherById(id);
+            Teacher teacher = getTeacherById(id, true);
             repository.delete(teacher);
 
         } else {
@@ -61,12 +61,15 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Teacher getTeacherById(String id) {
+    public Teacher getTeacherById(String id, boolean getNotActive) {
         if (!UUIDValidator.isValid(id)) {
             throw teacherNotFoundException;
         }
         Optional<Teacher> teacher = repository.findById(UUID.fromString(id));
         if (!teacher.isPresent()) {
+            throw teacherNotFoundException;
+        }
+        if (!teacher.get().getIsActive() && !getNotActive) {
             throw teacherNotFoundException;
         }
         return teacher.get();
@@ -83,7 +86,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Teacher updateTeacher(String id, TeacherDto updatedTeacher) {
-        Teacher teacher = getTeacherById(id);
+        Teacher teacher = getTeacherById(id, false);
         validateTeacherData(updatedTeacher);
         if (updatedTeacher.firstName() != null) {
             teacher.setFirstName(updatedTeacher.firstName());

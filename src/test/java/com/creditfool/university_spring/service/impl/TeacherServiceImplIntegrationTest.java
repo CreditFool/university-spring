@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -119,11 +118,11 @@ class TeacherServiceImplIntegrationTest {
     void testGetTeacherById() {
         List<Teacher> actualList = service.getAllTeacher();
         for (Teacher teacher : actualList) {
-            assertEquals(teacher, service.getTeacherById(String.valueOf(teacher.getId())));
+            assertEquals(teacher, service.getTeacherById(String.valueOf(teacher.getId()), true));
         }
 
         try {
-            Teacher invalidTeacher = service.getTeacherById("123456");
+            Teacher invalidTeacher = service.getTeacherById("123456", true);
             assertNull(invalidTeacher);
 
         } catch (RuntimeException e) {
@@ -186,7 +185,7 @@ class TeacherServiceImplIntegrationTest {
         service.updateTeacher(String.valueOf(savedTeacher.getId()),
                 new TeacherDto(null, newFirstName, null, null, null, null, null));
 
-        Teacher updatedTeacher = service.getTeacherById(String.valueOf(savedTeacher.getId()));
+        Teacher updatedTeacher = service.getTeacherById(String.valueOf(savedTeacher.getId()), true);
         assertEquals(newFirstName, updatedTeacher.getFirstName());
         assertEquals(oldEmail, updatedTeacher.getEmail());
 
@@ -227,7 +226,7 @@ class TeacherServiceImplIntegrationTest {
 
         }
 
-        Teacher sameTeacher = service.getTeacherById(String.valueOf(savedTeacher.getId()));
+        Teacher sameTeacher = service.getTeacherById(String.valueOf(savedTeacher.getId()), true);
         assertEquals(updatedTeacher.getEmail(), sameTeacher.getEmail());
         assertEquals(updatedTeacher.getNip(), sameTeacher.getNip());
         assertEquals(updatedTeacher.getPhone(), sameTeacher.getPhone());
@@ -235,7 +234,7 @@ class TeacherServiceImplIntegrationTest {
         service.updateTeacher(String.valueOf(savedTeacher.getId()),
                 new TeacherDto(null, null, null, null, null, null, newEmail));
 
-        updatedTeacher = service.getTeacherById(String.valueOf(savedTeacher.getId()));
+        updatedTeacher = service.getTeacherById(String.valueOf(savedTeacher.getId()), true);
         assertEquals(newEmail, updatedTeacher.getEmail());
     }
 
@@ -268,7 +267,7 @@ class TeacherServiceImplIntegrationTest {
         }
 
         service.deleteTeacher(String.valueOf(savedTeacher.getId()));
-        Teacher deletedTeacher = service.getTeacherById(String.valueOf(savedTeacher.getId()));
+        Teacher deletedTeacher = service.getTeacherById(String.valueOf(savedTeacher.getId()), true);
         assertFalse(deletedTeacher.getIsActive());
 
         try {
@@ -308,7 +307,7 @@ class TeacherServiceImplIntegrationTest {
         assertEquals(0, notActiveTeachers.size());
 
         try {
-            Teacher invalidTeacher = service.getTeacherById(String.valueOf(savedTeacher.getId()));
+            Teacher invalidTeacher = service.getTeacherById(String.valueOf(savedTeacher.getId()), true);
             assertNull(invalidTeacher);
 
         } catch (RuntimeException e) {

@@ -13,7 +13,7 @@ public interface TeacherService {
 
     public List<Teacher> getAllTeacher(boolean isActive);
 
-    public Teacher getTeacherById(String id);
+    public Teacher getTeacherById(String id, boolean getNotActive);
 
     public Teacher getTeacherByNip(String nip);
 
