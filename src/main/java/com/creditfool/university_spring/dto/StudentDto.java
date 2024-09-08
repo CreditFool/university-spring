@@ -13,6 +13,6 @@ public record StudentDto(
         String lastName,
         @NotBlank String nim,
         @NotBlank String address,
-        @PhoneNumber String phone,
-        @Email String email) {
+        @PhoneNumber @NotBlank String phone,
+        @Email @NotBlank String email) {
 }

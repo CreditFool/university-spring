@@ -8,11 +8,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public record TeacherDto(
-                UUID id,
-                @NotBlank String firstName,
-                String lastName,
-                @NotBlank String nip,
-                @NotBlank String address,
-                @PhoneNumber String phone,
-                @Email String email) {
+        UUID id,
+        @NotBlank String firstName,
+        String lastName,
+        @NotBlank String nip,
+        @NotBlank String address,
+        @PhoneNumber @NotBlank String phone,
+        @Email @NotBlank String email) {
 }

@@ -7,6 +7,9 @@ public class PhoneNumberValidator implements ConstraintValidator<PhoneNumber, St
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return false;
+        }
         boolean isNumeric = value.chars().allMatch(Character::isDigit);
         return isNumeric && value.length() >= 11 && value.length() <= 13;
     }
