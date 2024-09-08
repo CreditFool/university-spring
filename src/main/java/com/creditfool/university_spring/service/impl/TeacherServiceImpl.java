@@ -103,6 +103,7 @@ public class TeacherServiceImpl implements TeacherService {
         if (updatedTeacher.email() != null) {
             teacher.setEmail(updatedTeacher.email());
         }
+        repository.save(teacher);
         return teacher;
     }
 
