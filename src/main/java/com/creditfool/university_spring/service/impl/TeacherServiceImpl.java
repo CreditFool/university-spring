@@ -69,7 +69,7 @@ public class TeacherServiceImpl implements TeacherService {
         if (!teacher.isPresent()) {
             throw teacherNotFoundException;
         }
-        if (!teacher.get().getIsActive() && !getNotActive) {
+        if (!teacher.get().getIsActive().booleanValue() && !getNotActive) {
             throw teacherNotFoundException;
         }
         return teacher.get();
