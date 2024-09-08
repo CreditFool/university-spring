@@ -20,7 +20,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.creditfool.university_spring.entity.Subject;
 
 @SpringBootTest
-public class SubjectRepositoryIntegrationTest {
+class SubjectRepositoryIntegrationTest {
 
     @Autowired
     SubjectRepository repository;
