@@ -1,6 +1,7 @@
 package com.creditfool.university_spring.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -18,5 +19,5 @@ public interface CommonMethodRepository<T> extends JpaRepository<T, UUID> {
 
     Page<T> findAllByDeletedAtIsNotNull(Pageable pageable);
 
-    T findByIdAndDeletedAtIsNull(UUID id);
+    Optional<T> findByIdAndDeletedAtIsNull(UUID id);
 }

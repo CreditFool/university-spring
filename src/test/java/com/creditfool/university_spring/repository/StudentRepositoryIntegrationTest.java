@@ -2,9 +2,11 @@ package com.creditfool.university_spring.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -149,11 +151,11 @@ class StudentRepositoryIntegrationTest {
                 .build();
 
         Student savedStudent = repository.save(aya);
-        Student foundedData = repository.findByIdAndDeletedAtIsNull(savedStudent.getId());
+        Optional<Student> foundedData = repository.findByIdAndDeletedAtIsNull(savedStudent.getId());
 
-        assertNotNull(foundedData);
-        assertEquals(savedStudent.getId(), foundedData.getId());
-        assertEquals(aya.getFirstName(), foundedData.getFirstName());
+        assertTrue(foundedData.isPresent());
+        assertEquals(savedStudent.getId(), foundedData.get().getId());
+        assertEquals(aya.getFirstName(), foundedData.get().getFirstName());
     }
 
 }
