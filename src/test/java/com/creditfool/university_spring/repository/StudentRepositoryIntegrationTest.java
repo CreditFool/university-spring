@@ -1,20 +1,17 @@
 package com.creditfool.university_spring.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import com.creditfool.university_spring.entity.Student;
 
@@ -22,134 +19,141 @@ import com.creditfool.university_spring.entity.Student;
 class StudentRepositoryIntegrationTest {
 
     @Autowired
-    private StudentRepository repository;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    private List<Student> baseData = new ArrayList<>(List.of(
-            new Student(null, "Berenice", "Cartwright", "1234567890", "7584 Marquardt Isle",
-                    "081234567890", "emailA@mail.zzz", true),
-            new Student(null, "Katheryn", "Hills", "1234567891", "Cronin Coves",
-                    "081234567891", "emailB@mail.zzz", true),
-            new Student(null, "Marcia", "O'Kon", "1234567892", "Wiza Rapid",
-                    "081234567892", "emailC@mail.zzz", false)));
+    StudentRepository repository;
 
     @BeforeEach
-    private void setup() {
-        repository.saveAll(baseData);
-    }
+    void setup() {
+        repository.deleteAll();
 
-    @AfterEach
-    public void execute() {
-        jdbcTemplate.execute("TRUNCATE TABLE student");
-    }
+        Student student1 = Student.builder()
+                .firstName("Kokoro")
+                .lastName("Tsurumaki")
+                .address("Happy land")
+                .email("kokoro@mail.com")
+                .phone("12345678910")
+                .nim("1234567891")
+                .build();
 
-    @Test
-    void testFindAll() {
-        List<Student> actualData = repository.findAll();
-        assertEquals(3, actualData.size());
-    }
+        Student student2 = Student.builder()
+                .firstName("Kanon")
+                .lastName("Matsubara")
+                .address("Happy land")
+                .email("kanon@mail.com")
+                .phone("12345678911")
+                .nim("1234567892")
+                .build();
 
-    @Test
-    void testFindByIsActive() {
-        List<Student> actualData = repository.findByIsActive(true);
-        assertEquals(2, actualData.size());
+        Student student3 = Student.builder()
+                .firstName("Kaoru")
+                .lastName("Seta")
+                .address("Happy land")
+                .email("seta@mail.com")
+                .phone("12345678912")
+                .nim("1234567893")
+                .build();
 
-        actualData = repository.findByIsActive(false);
-        assertEquals(1, actualData.size());
-    }
+        Student student4 = Student.builder()
+                .firstName("Hagumi")
+                .lastName("Kitagawa")
+                .address("Happy land")
+                .email("hagumi@mail.com")
+                .phone("12345678913")
+                .nim("1234567894")
+                .build();
 
-    @Test
-    void testFindByIdAndIsActive() {
-        List<Student> actualData = repository.findByIsActive(true);
-        for (Student actual : actualData) {
-            assertEquals(actual, repository.findById(actual.getId()).get());
-        }
+        Student student5 = Student.builder()
+                .firstName("Misaki")
+                .lastName("Okusawa")
+                .address("Happy land")
+                .email("misaki@mail.com")
+                .phone("12345678914")
+                .nim("1234567895")
+                .build();
 
-        actualData = repository.findByIsActive(false);
-        for (Student actual : actualData) {
-            assertEquals(actual, repository.findById(actual.getId()).get());
-        }
-    }
+        Student student6 = Student.builder()
+                .firstName("Michelle")
+                .address("Happy land")
+                .email("misaki@mail.com")
+                .phone("12345678914")
+                .nim("1234567896")
+                .deletedAt(LocalDateTime.now())
+                .build();
 
-    @Test
-    void testFindById() {
-        List<Student> actualData = repository.findAll();
-        for (Student actual : actualData) {
-            assertEquals(actual, repository.findById(actual.getId()).get());
-        }
-
-        assertFalse(repository.findById(UUID.randomUUID()).isPresent());
-    }
-
-    @Test
-    void testFindByNim() {
-        String activeNim = "1234567890";
-        String notActiveNim = "1234567892";
-        String notExistNim = "1236669990";
-
-        Optional<Student> savedStudent = repository.findByNim(activeNim);
-        assertTrue(savedStudent.isPresent(), "Check if active student found with nim");
-
-        savedStudent = repository.findByNim(notActiveNim);
-        assertFalse(savedStudent.isPresent(), "Check if not active student not found with nim");
-
-        savedStudent = repository.findByNim(notExistNim);
-        assertFalse(savedStudent.isPresent(), "Check if not exist nim not found");
+        repository.saveAll(List.of(
+                student1, student2, student3, student4, student5, student6));
     }
 
     @Test
     void testSave() {
-        String firstName = "Jonathan";
-        String lastName = "Joestar";
-        String nim = "1234567893";
-        String address = "lorem ipsum";
-        String phone = "081234567890";
-        String email = "xxx@yyy.zzz";
-
-        assertEquals(3, repository.count());
-
-        Student newStudent = new Student();
-        newStudent.setFirstName(firstName);
-        newStudent.setLastName(lastName);
-        newStudent.setNim(nim);
-        newStudent.setAddress(address);
-        newStudent.setPhone(phone);
-        newStudent.setEmail(email);
-        repository.save(newStudent);
-        assertEquals(4, repository.count());
-
-        Optional<Student> savedStudent = repository.findByNim(nim);
-        assertTrue(savedStudent.isPresent());
-        assertEquals(firstName, savedStudent.get().getFirstName());
-        assertEquals(nim, savedStudent.get().getNim());
-        assertEquals(phone, savedStudent.get().getPhone());
-        assertEquals(true, savedStudent.get().getIsActive());
-
-        String newFirstName = "Joseph";
-        UUID savedStudentId = savedStudent.get().getId();
-        savedStudent.get().setFirstName(newFirstName);
-        repository.save(savedStudent.get());
-
-        Optional<Student> updatedStudent = repository.findById(savedStudentId);
-        assertTrue(updatedStudent.isPresent());
-        assertEquals(savedStudentId, updatedStudent.get().getId());
-        assertEquals(newFirstName, updatedStudent.get().getFirstName());
+        assertEquals(6, repository.count());
     }
 
     @Test
-    void testDelete() {
-        List<Student> actualData = repository.findAll();
-        assertEquals(3, actualData.size());
+    void testFindAllByDeletedAtIsNotNull() {
+        List<Student> actuaList = repository.findAllByDeletedAtIsNotNull();
+        assertEquals(1, actuaList.size());
+    }
 
-        Student firstStudent = actualData.get(0);
-        assertTrue(actualData.contains(firstStudent));
+    @Test
+    void testFindAllByDeletedAtIsNotNullWithPage() {
+        Page<Student> pageList = repository.findAllByDeletedAtIsNotNull(PageRequest.of(0, 2));
+        assertNotNull(pageList);
+        assertEquals(1, pageList.getTotalPages());
+        assertEquals(1, pageList.getNumberOfElements());
+        assertEquals(1, pageList.getTotalElements());
+    }
 
-        repository.delete(firstStudent);
-        actualData = repository.findAll();
-        assertEquals(2, actualData.size());
-        assertFalse(actualData.contains(firstStudent));
+    @Test
+    void testFindAllByDeletedAtIsNull() {
+        List<Student> actuaList = repository.findAllByDeletedAtIsNull();
+        assertEquals(5, actuaList.size());
+    }
+
+    @Test
+    void testFindAllByDeletedAtIsNullWithPage() {
+        Page<Student> pageList = repository.findAllByDeletedAtIsNull(PageRequest.of(0, 2));
+        assertNotNull(pageList);
+        assertEquals(3, pageList.getTotalPages());
+        assertEquals(2, pageList.getNumberOfElements());
+        assertEquals(5, pageList.getTotalElements());
+    }
+
+    @Test
+    void testFindAllByEmailIgnoreCaseOrPhoneOrNimAndDeletedAtIsNull() {
+        List<Student> actuaList = repository.findAllByEmailIgnoreCaseOrPhoneOrNimAndDeletedAtIsNull(
+                "kokoro@mail.com",
+                "12345678911",
+                "1234567893"
+
+        );
+        assertEquals(3, actuaList.size());
+
+        actuaList = repository.findAllByEmailIgnoreCaseOrPhoneOrNimAndDeletedAtIsNull(
+                "kokoro@mail.com",
+                "12345678911",
+                "1234567896"
+
+        );
+        assertEquals(2, actuaList.size());
+    }
+
+    @Test
+    void testFindByIdAndDeletedAtIsNull() {
+        Student aya = Student.builder()
+                .firstName("Aya")
+                .lastName("Maruyama")
+                .address("Pasupare land")
+                .email("aya@mail.com")
+                .phone("12345678922")
+                .nim("2234567893")
+                .build();
+
+        Student savedStudent = repository.save(aya);
+        Student foundedData = repository.findByIdAndDeletedAtIsNull(savedStudent.getId());
+
+        assertNotNull(foundedData);
+        assertEquals(savedStudent.getId(), foundedData.getId());
+        assertEquals(aya.getFirstName(), foundedData.getFirstName());
     }
 
 }

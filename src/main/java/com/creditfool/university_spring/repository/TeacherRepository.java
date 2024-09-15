@@ -2,19 +2,24 @@ package com.creditfool.university_spring.repository;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import com.creditfool.university_spring.entity.Teacher;
 
 public interface TeacherRepository extends JpaRepository<Teacher, UUID> {
 
-    List<Teacher> findByIsActive(Boolean isActive);
+    List<Teacher> findAllByDeletedAtIsNull();
 
-    Teacher findByIdAndIsActive(UUID id, Boolean isActive);
+    List<Teacher> findAllByDeletedAtIsNotNull();
 
-    @Query("SELECT t FROM Teacher t WHERE t.nip = :nip AND t.isActive = true")
-    Optional<Teacher> findByNip(String nip);
+    Page<Teacher> findAllByDeletedAtIsNull(Pageable pageable);
+
+    Page<Teacher> findAllByDeletedAtIsNotNull(Pageable pageable);
+
+    Teacher findByIdAndDeletedAtIsNull(UUID id);
+
+    List<Teacher> findAllByEmailIgnoreCaseOrPhoneOrNipAndDeletedAtIsNull(String email, String phone, String nip);
 }
