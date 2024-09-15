@@ -1,7 +1,11 @@
 package com.creditfool.university_spring.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -9,136 +13,58 @@ import org.junit.jupiter.api.Test;
 
 class StudentTest {
 
-    private Student studentA;
+    private Student student;
 
     private UUID id = UUID.randomUUID();
     private String firstName = "Marta";
     private String lastName = "Rohan";
-    private String nip = "1234567890";
+    private String nim = "1234567890";
     private String address = "lorem ipsum";
     private String phone = "081234567890";
     private String email = "xxx@yyy.zzz";
 
     @BeforeEach
     void setup() {
-        studentA = new Student();
-        studentA.setId(id);
-        studentA.setFirstName(firstName);
-        studentA.setLastName(lastName);
-        studentA.setNim(nip);
-        studentA.setAddress(address);
-        studentA.setPhone(phone);
-        studentA.setEmail(email);
+        student = Student.builder()
+                .id(id)
+                .firstName(firstName)
+                .lastName(lastName)
+                .nim(nim)
+                .address(address)
+                .phone(phone)
+                .email(email)
+                .build();
     }
 
     @Test
-    void testEquals() {
-        assertEquals(true, studentA.equals(studentA));
-        assertEquals(studentA, studentA);
+    void testBuild() {
+        assertNotNull(student);
+        assertNotNull(student.getCreatedAt());
+        assertNull(student.getUpdatedAt());
+        assertNull(student.getDeletedAt());
+        assertTrue(student.getIsActive());
 
-        Student studentB = new Student(id, firstName, lastName, nip, address, phone, email, null);
-        assertEquals(true, studentA.equals(studentB));
+        assertEquals(firstName, student.getFirstName());
+        assertEquals(email, student.getEmail());
     }
 
     @Test
-    void testNotEquals() {
-        Student studentB = new Student();
-        assertEquals(false, studentA.equals(studentB));
-    }
+    void testUpdateProperties() {
+        String newFirstName = "Kokoro";
+        String newLastName = "Tsurumaki";
+        LocalDateTime updateTime = LocalDateTime.now();
 
-    @Test
-    void testGetAddress() {
-        assertEquals(address, studentA.getAddress());
-    }
+        assertEquals(firstName, student.getFirstName());
+        assertEquals(lastName, student.getLastName());
+        assertNull(student.getUpdatedAt());
 
-    @Test
-    void testGetEmail() {
-        assertEquals(email, studentA.getEmail());
-    }
+        student.setFirstName(newFirstName);
+        student.setLastName(newLastName);
+        student.setUpdatedAt(updateTime);
 
-    @Test
-    void testGetFirstName() {
-        assertEquals(firstName, studentA.getFirstName());
-    }
-
-    @Test
-    void testGetId() {
-        assertEquals(id, studentA.getId());
-    }
-
-    @Test
-    void testGetIsActive() {
-        assertEquals(true, studentA.getIsActive());
-    }
-
-    @Test
-    void testGetLastName() {
-        assertEquals(lastName, studentA.getLastName());
-    }
-
-    @Test
-    void testGetNim() {
-        assertEquals(nip, studentA.getNim());
-    }
-
-    @Test
-    void testGetPhone() {
-        assertEquals(phone, studentA.getPhone());
-    }
-
-    @Test
-    void testSetAddress() {
-        String newAddress = "new address";
-        studentA.setAddress(newAddress);
-        assertEquals(newAddress, studentA.getAddress());
-    }
-
-    @Test
-    void testSetEmail() {
-        String newEmail = "new@mail.zzz";
-        studentA.setEmail(newEmail);
-        assertEquals(newEmail, studentA.getEmail());
-    }
-
-    @Test
-    void testSetFirstName() {
-        String newFirstName = "new first";
-        studentA.setFirstName(newFirstName);
-        assertEquals(newFirstName, studentA.getFirstName());
-    }
-
-    @Test
-    void testSetId() {
-        UUID newId = UUID.randomUUID();
-        studentA.setId(newId);
-        assertEquals(newId, studentA.getId());
-    }
-
-    @Test
-    void testSetIsActive() {
-        studentA.setIsActive(false);
-        assertEquals(false, studentA.getIsActive());
-    }
-
-    @Test
-    void testSetLastName() {
-        String newLastName = "new last";
-        studentA.setLastName(newLastName);
-        assertEquals(newLastName, studentA.getLastName());
-    }
-
-    @Test
-    void testSetNim() {
-        String newNim = "091232456312";
-        studentA.setNim(newNim);
-        assertEquals(newNim, studentA.getNim());
-    }
-
-    @Test
-    void testSetPhone() {
-        String newPhone = "866-570-6605 x3015";
-        studentA.setPhone(newPhone);
-        assertEquals(newPhone, studentA.getPhone());
+        assertEquals(newFirstName, student.getFirstName());
+        assertEquals(newLastName, student.getLastName());
+        assertEquals(updateTime, student.getUpdatedAt());
     }
 
 }

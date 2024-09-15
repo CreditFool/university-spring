@@ -1,69 +1,54 @@
 package com.creditfool.university_spring.entity;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.UUID;
-
 class SubjectTest {
 
-    private Subject subjectA;
+    private Subject subject;
 
     private UUID id = UUID.randomUUID();
     private String subjectName = "Math";
 
     @BeforeEach
     void setup() {
-        subjectA = new Subject();
-        subjectA.setId(id);
-        subjectA.setSubjectName(subjectName);
+        subject = Subject.builder()
+                .id(id)
+                .name(subjectName)
+                .build();
     }
 
     @Test
-    void testEquals() {
-        assertEquals(true, subjectA.equals(subjectA));
-        assertEquals(subjectA, subjectA);
+    void testBuild() {
+        assertNotNull(subject);
+        assertNotNull(subject.getCreatedAt());
+        assertNull(subject.getUpdatedAt());
+        assertNull(subject.getDeletedAt());
+        assertTrue(subject.getIsActive());
 
-        Subject subjectB = new Subject(id, subjectName, true);
-        assertEquals(true, subjectA.equals(subjectB));
+        assertEquals(subjectName, subject.getName());
     }
 
     @Test
-    void testGetId() {
-        assertEquals(id, subjectA.getId());
-    }
+    void testUpdateProperties() {
+        String newSubjectName = "Computer";
+        LocalDateTime updateTime = LocalDateTime.now();
 
-    @Test
-    void testGetIsActive() {
-        assertTrue(subjectA.getIsActive());
-    }
+        assertEquals(subjectName, subject.getName());
+        assertNull(subject.getUpdatedAt());
 
-    @Test
-    void testGetSubjectName() {
-        assertEquals(subjectName, subjectA.getSubjectName());
-    }
+        subject.setName(newSubjectName);
+        subject.setUpdatedAt(updateTime);
 
-    @Test
-    void testSetId() {
-        UUID newId = UUID.randomUUID();
-        subjectA.setId(newId);
-        assertEquals(newId, subjectA.getId());
-    }
-
-    @Test
-    void testSetIsActive() {
-        subjectA.setIsActive(false);
-        assertFalse(subjectA.getIsActive());
-    }
-
-    @Test
-    void testSetSubjectName() {
-        String newSubjectName = "Data Structure";
-        subjectA.setSubjectName(newSubjectName);
-        assertEquals(newSubjectName, subjectA.getSubjectName());
+        assertEquals(newSubjectName, subject.getName());
+        assertEquals(updateTime, subject.getUpdatedAt());
     }
 }
