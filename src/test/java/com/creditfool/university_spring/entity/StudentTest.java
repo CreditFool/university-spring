@@ -3,7 +3,6 @@ package com.creditfool.university_spring.entity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -42,7 +41,6 @@ class StudentTest {
         assertNotNull(student.getCreatedAt());
         assertNull(student.getUpdatedAt());
         assertNull(student.getDeletedAt());
-        assertTrue(student.getIsActive());
 
         assertEquals(firstName, student.getFirstName());
         assertEquals(email, student.getEmail());

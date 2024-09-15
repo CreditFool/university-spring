@@ -3,8 +3,6 @@ package com.creditfool.university_spring.entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.hibernate.annotations.ColumnDefault;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,11 +24,6 @@ abstract class AuditEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(unique = true, nullable = false)
     private UUID id;
-
-    @Column(name = "is_active", nullable = false)
-    @ColumnDefault("true")
-    @Builder.Default
-    private Boolean isActive = true;
 
     @Column(name = "created_at")
     @Builder.Default
