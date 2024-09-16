@@ -10,16 +10,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
-public interface CommonMethodRepository<T, R> extends JpaRepository<T, UUID> {
+public interface CommonMethodRepository<T> extends JpaRepository<T, UUID> {
     List<T> findAllByDeletedAtIsNull();
 
     List<T> findAllByDeletedAtIsNotNull();
 
-    Page<R> findListAll(Pageable pageable);
+    Page<T> findAllByDeletedAtIsNull(Pageable pageable);
 
-    Page<R> findAllByDeletedAtIsNull(Pageable pageable);
-
-    Page<R> findAllByDeletedAtIsNotNull(Pageable pageable);
+    Page<T> findAllByDeletedAtIsNotNull(Pageable pageable);
 
     Optional<T> findByIdAndDeletedAtIsNull(UUID id);
 }
