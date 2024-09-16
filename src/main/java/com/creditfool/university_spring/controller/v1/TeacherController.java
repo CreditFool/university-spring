@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.creditfool.university_spring.dto.SearchByIdDto;
-import com.creditfool.university_spring.dto.TeacherDto;
+import com.creditfool.university_spring.dto.request.SearchByIdRequest;
+import com.creditfool.university_spring.dto.request.TeacherCreateUpdateRequest;
 import com.creditfool.university_spring.entity.Teacher;
 import com.creditfool.university_spring.service.TeacherService;
 
@@ -29,28 +29,29 @@ public class TeacherController {
 
     @GetMapping("teachers")
     public List<Teacher> getAllTeacher() {
-        return teacherService.getAllTeacher();
+        return teacherService.getAll();
     }
 
     @GetMapping("teacher")
-    public Teacher getTeacherById(@Valid @RequestBody SearchByIdDto dto) {
-        return teacherService.getTeacherById(dto.id(), false);
+    public Teacher getTeacherById(@Valid @RequestBody SearchByIdRequest request) {
+        return teacherService.getById(request.toUUID());
     }
 
     @PostMapping("teacher")
     @ResponseStatus(HttpStatus.CREATED)
-    public Teacher createTeacher(@Valid @RequestBody TeacherDto dto) {
-        return teacherService.createTeacher(dto);
+    public Teacher createTeacher(@Valid @RequestBody TeacherCreateUpdateRequest request) {
+        return teacherService.create(request.toTeacher());
     }
 
     @PutMapping("teacher")
-    public Teacher updateTeacher(@Valid @RequestBody TeacherDto dto) {
-        return teacherService.updateTeacher(String.valueOf(dto.id()), dto);
+    public Teacher updateTeacher(@Valid @RequestBody TeacherCreateUpdateRequest request) {
+        Teacher requestEntity = request.toTeacher();
+        return teacherService.update(requestEntity.getId(), requestEntity);
     }
 
     @DeleteMapping("teacher")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTeacher(@Valid @RequestBody SearchByIdDto dto) {
-        teacherService.deleteTeacher(dto.id());
+    public void deleteTeacher(@Valid @RequestBody SearchByIdRequest request) {
+        teacherService.delete(request.toUUID());
     }
 }

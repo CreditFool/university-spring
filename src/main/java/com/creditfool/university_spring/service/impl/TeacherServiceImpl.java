@@ -1,141 +1,57 @@
 package com.creditfool.university_spring.service.impl;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.UUID;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.creditfool.university_spring.dto.TeacherDto;
 import com.creditfool.university_spring.entity.Teacher;
-import com.creditfool.university_spring.exception.DataAlreadyExistException;
-import com.creditfool.university_spring.exception.DataNotFoundException;
 import com.creditfool.university_spring.repository.TeacherRepository;
 import com.creditfool.university_spring.service.TeacherService;
-import com.creditfool.university_spring.util.UUIDValidator;
+import com.creditfool.university_spring.util.RepositoryValidator;
 
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class TeacherServiceImpl implements TeacherService {
+public class TeacherServiceImpl extends CommonCrudServiceImpl<Teacher> implements TeacherService {
 
-    private final TeacherRepository repository;
-
-    private final DataNotFoundException teacherNotFoundException = new DataNotFoundException("Teacher not found");
+    private final TeacherRepository teacherRepository;
+    private final RepositoryValidator<Teacher> teacherRepositoryValidator;
 
     @Override
-    public Teacher createTeacher(TeacherDto teacherDto) {
-        validateTeacherData(teacherDto);
-        Teacher teacher = dtoToEntity(teacherDto);
-        return repository.save(teacher);
+    public TeacherRepository getRepository() {
+        return this.teacherRepository;
     }
 
     @Override
-    public void deleteTeacher(String id) {
-        Teacher teacher = getTeacherById(id, false);
-        teacher.setIsActive(false);
-        repository.save(teacher);
+    public RepositoryValidator<Teacher> getRepositoryValidator() {
+        return this.teacherRepositoryValidator;
     }
 
     @Override
-    public void deleteTeacher(String id, boolean isHardDelete) {
-        if (isHardDelete) {
-            Teacher teacher = getTeacherById(id, true);
-            repository.delete(teacher);
-
-        } else {
-            deleteTeacher(id);
+    public Teacher updatePartial(UUID id, Teacher updatedData) {
+        Teacher currentData = getById(id, true);
+        repositoryValidator.validate(updatedData);
+        if (updatedData.getFirstName() != null) {
+            currentData.setFirstName(updatedData.getFirstName());
         }
-
-    }
-
-    @Override
-    public List<Teacher> getAllTeacher() {
-        return repository.findAll();
-    }
-
-    @Override
-    public List<Teacher> getAllTeacher(boolean isActive) {
-        return repository.findByIsActive(isActive);
-    }
-
-    @Override
-    public Teacher getTeacherById(String id, boolean getNotActive) {
-        if (!UUIDValidator.isValid(id)) {
-            throw teacherNotFoundException;
+        if (updatedData.getLastName() != null) {
+            currentData.setLastName(updatedData.getLastName());
         }
-        Optional<Teacher> teacher = repository.findById(UUID.fromString(id));
-        if (!teacher.isPresent()) {
-            throw teacherNotFoundException;
+        if (updatedData.getAddress() != null) {
+            currentData.setAddress(updatedData.getAddress());
         }
-        if (!teacher.get().getIsActive().booleanValue() && !getNotActive) {
-            throw teacherNotFoundException;
+        if (updatedData.getEmail() != null) {
+            currentData.setEmail(updatedData.getEmail());
         }
-        return teacher.get();
-    }
-
-    @Override
-    public Teacher getTeacherByNip(String nip) {
-        Optional<Teacher> teacher = repository.findByNip(nip);
-        if (!teacher.isPresent()) {
-            throw teacherNotFoundException;
+        if (updatedData.getPhone() != null) {
+            currentData.setPhone(updatedData.getPhone());
         }
-        return teacher.get();
-    }
-
-    @Override
-    public Teacher updateTeacher(String id, TeacherDto updatedTeacher) {
-        Teacher teacher = getTeacherById(id, false);
-        validateTeacherData(updatedTeacher);
-        if (updatedTeacher.firstName() != null) {
-            teacher.setFirstName(updatedTeacher.firstName());
+        if (updatedData.getNip() != null) {
+            currentData.setNip(updatedData.getNip());
         }
-        if (updatedTeacher.lastName() != null) {
-            teacher.setLastName(updatedTeacher.lastName());
-        }
-        if (updatedTeacher.nip() != null) {
-            teacher.setNip(updatedTeacher.nip());
-        }
-        if (updatedTeacher.address() != null) {
-            teacher.setAddress(updatedTeacher.address());
-        }
-        if (updatedTeacher.phone() != null) {
-            teacher.setPhone(updatedTeacher.phone());
-        }
-        if (updatedTeacher.email() != null) {
-            teacher.setEmail(updatedTeacher.email());
-        }
-        repository.save(teacher);
-        return teacher;
-    }
-
-    private void validateTeacherData(TeacherDto teacherDto) {
-        List<Teacher> activeTeacher = getAllTeacher(true);
-        for (Teacher teacher : activeTeacher) {
-            if (teacher.getId().equals(teacherDto.id())) {
-                continue;
-            }
-            if (teacher.getNip().equals(teacherDto.nip())) {
-                throw new DataAlreadyExistException("Teacher with same NIP already exist");
-            }
-            if (teacher.getEmail().equals(teacherDto.email())) {
-                throw new DataAlreadyExistException("Teacher with same Email already exist");
-            }
-            if (teacher.getPhone().equals(teacherDto.phone())) {
-                throw new DataAlreadyExistException("Teacher with same Phone Number already exist");
-            }
-        }
-    }
-
-    private Teacher dtoToEntity(TeacherDto teacherDto) {
-        Teacher teacher = new Teacher();
-        teacher.setFirstName(teacherDto.firstName());
-        teacher.setLastName(teacherDto.lastName());
-        teacher.setNip(teacherDto.nip());
-        teacher.setAddress(teacherDto.address());
-        teacher.setEmail(teacherDto.email());
-        teacher.setPhone(teacherDto.phone());
-        return teacher;
+        currentData.setUpdatedAt(LocalDateTime.now());
+        return repository.save(currentData);
     }
 }
