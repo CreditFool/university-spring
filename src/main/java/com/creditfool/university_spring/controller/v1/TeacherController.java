@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.creditfool.university_spring.constant.PathApi;
 import com.creditfool.university_spring.dto.request.SearchByIdRequest;
 import com.creditfool.university_spring.dto.request.TeacherCreateUpdateRequest;
 import com.creditfool.university_spring.entity.Teacher;
@@ -21,35 +22,35 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping(PathApi.API_V1)
 @AllArgsConstructor
 public class TeacherController {
 
     private final TeacherService teacherService;
 
-    @GetMapping("teachers")
+    @GetMapping(PathApi.TEACHERS)
     public List<Teacher> getAllTeacher() {
         return teacherService.getAll();
     }
 
-    @GetMapping("teacher")
+    @GetMapping(PathApi.TEACHER)
     public Teacher getTeacherById(@Valid @RequestBody SearchByIdRequest request) {
         return teacherService.getById(request.toUUID());
     }
 
-    @PostMapping("teacher")
+    @PostMapping(PathApi.TEACHER)
     @ResponseStatus(HttpStatus.CREATED)
     public Teacher createTeacher(@Valid @RequestBody TeacherCreateUpdateRequest request) {
         return teacherService.create(request.toTeacher());
     }
 
-    @PutMapping("teacher")
+    @PutMapping(PathApi.TEACHER)
     public Teacher updateTeacher(@Valid @RequestBody TeacherCreateUpdateRequest request) {
         Teacher requestEntity = request.toTeacher();
         return teacherService.update(requestEntity.getId(), requestEntity);
     }
 
-    @DeleteMapping("teacher")
+    @DeleteMapping(PathApi.TEACHER)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTeacher(@Valid @RequestBody SearchByIdRequest request) {
         teacherService.delete(request.toUUID());

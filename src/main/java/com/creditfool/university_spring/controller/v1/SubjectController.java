@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.creditfool.university_spring.constant.PathApi;
 import com.creditfool.university_spring.dto.request.SearchByIdRequest;
 import com.creditfool.university_spring.dto.request.SubjectCreateUpdateRequest;
 import com.creditfool.university_spring.entity.Subject;
@@ -21,35 +22,35 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping(PathApi.API_V1)
 @AllArgsConstructor
 public class SubjectController {
 
     private final SubjectService subjectService;
 
-    @GetMapping("subjects")
+    @GetMapping(PathApi.SUBJECTS)
     public List<Subject> getAllSubject() {
         return subjectService.getAll();
     }
 
-    @GetMapping("subject")
+    @GetMapping(PathApi.SUBJECT)
     public Subject getSubjectById(@Valid @RequestBody SearchByIdRequest request) {
         return subjectService.getById(request.toUUID());
     }
 
-    @PostMapping("subject")
+    @PostMapping(PathApi.SUBJECT)
     @ResponseStatus(HttpStatus.CREATED)
     public Subject createSubject(@Valid @RequestBody SubjectCreateUpdateRequest request) {
         return subjectService.create(request.toSubject());
     }
 
-    @PutMapping("subject")
+    @PutMapping(PathApi.SUBJECT)
     public Subject updateSubject(@Valid @RequestBody SubjectCreateUpdateRequest request) {
         Subject requestEntity = request.toSubject();
         return subjectService.update(requestEntity.getId(), requestEntity);
     }
 
-    @DeleteMapping("subject")
+    @DeleteMapping(PathApi.SUBJECT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSubject(@Valid @RequestBody SearchByIdRequest request) {
         subjectService.delete(request.toUUID());

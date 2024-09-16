@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.creditfool.university_spring.constant.PathApi;
 import com.creditfool.university_spring.dto.request.SearchByIdRequest;
 import com.creditfool.university_spring.dto.request.StudentCreateUpdateRequest;
 import com.creditfool.university_spring.entity.Student;
@@ -21,35 +22,35 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping(PathApi.API_V1)
 @AllArgsConstructor
 public class StudentController {
 
     private final StudentService studentService;
 
-    @GetMapping("students")
+    @GetMapping(PathApi.STUDENTS)
     public List<Student> getAllStudent() {
         return studentService.getAll();
     }
 
-    @GetMapping("student")
+    @GetMapping(PathApi.STUDENT)
     public Student getStudentById(@Valid @RequestBody SearchByIdRequest request) {
         return studentService.getById(request.toUUID());
     }
 
-    @PostMapping("student")
+    @PostMapping(PathApi.STUDENT)
     @ResponseStatus(HttpStatus.CREATED)
     public Student createStudent(@Valid @RequestBody StudentCreateUpdateRequest request) {
         return studentService.create(request.toStudent());
     }
 
-    @PutMapping("student")
+    @PutMapping(PathApi.STUDENT)
     public Student updateStudent(@Valid @RequestBody StudentCreateUpdateRequest request) {
         Student requestEntity = request.toStudent();
         return studentService.update(requestEntity.getId(), requestEntity);
     }
 
-    @DeleteMapping("student")
+    @DeleteMapping(PathApi.STUDENT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteStudent(@Valid @RequestBody SearchByIdRequest request) {
         studentService.delete(request.toUUID());
