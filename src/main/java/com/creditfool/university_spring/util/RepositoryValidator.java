@@ -1,13 +1,16 @@
 package com.creditfool.university_spring.util;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
 import com.creditfool.university_spring.entity.Student;
+import com.creditfool.university_spring.entity.Subject;
 import com.creditfool.university_spring.entity.Teacher;
 import com.creditfool.university_spring.exception.DataAlreadyExistException;
 import com.creditfool.university_spring.repository.StudentRepository;
+import com.creditfool.university_spring.repository.SubjectRepository;
 import com.creditfool.university_spring.repository.TeacherRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class RepositoryValidator<T> {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+    private final SubjectRepository subjectRepository;
 
     public void validate(T data) {
         if (data instanceof Student) {
@@ -24,6 +28,9 @@ public class RepositoryValidator<T> {
 
         } else if (data instanceof Teacher) {
             validateTeacher((Teacher) data);
+
+        } else if (data instanceof Subject) {
+            validateSubject((Subject) data);
 
         }
     }
@@ -65,6 +72,13 @@ public class RepositoryValidator<T> {
             if (data.getNip().equals(teacher.getNip())) {
                 throw new DataAlreadyExistException("NIP already used");
             }
+        }
+    }
+
+    public void validateSubject(Subject subject) {
+        Optional<Subject> data = subjectRepository.findByNameIgnoreCaseAndDeletedAtIsNull(subject.getName());
+        if (data.isPresent() && !data.get().getId().equals(subject.getId())) {
+            throw new DataAlreadyExistException("Name already used");
         }
     }
 }
