@@ -15,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import com.creditfool.university_spring.dto.response.StudentListResponse;
 import com.creditfool.university_spring.entity.Student;
 
 @SpringBootTest
