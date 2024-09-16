@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @MappedSuperclass
 @SuperBuilder
-abstract class Profile extends AuditEntity {
+public abstract class Profile extends AuditEntity {
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
