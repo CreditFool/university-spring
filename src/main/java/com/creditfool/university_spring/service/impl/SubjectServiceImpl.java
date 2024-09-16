@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class SubjectServiceImpl extends CommonCrudServiceImpl<Subject, Subject> implements SubjectService {
+public class SubjectServiceImpl extends CommonCrudServiceImpl<Subject> implements SubjectService {
 
     private final SubjectRepository subjectRepository;
     private final RepositoryValidator<Subject> subjectRepositoryValidator;

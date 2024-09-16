@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class TeacherServiceImpl extends CommonCrudServiceImpl<Teacher, Teacher> implements TeacherService {
+public class TeacherServiceImpl extends CommonCrudServiceImpl<Teacher> implements TeacherService {
 
     private final TeacherRepository teacherRepository;
     private final RepositoryValidator<Teacher> teacherRepositoryValidator;

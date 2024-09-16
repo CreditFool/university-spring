@@ -3,6 +3,8 @@ package com.creditfool.university_spring.service.impl;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.creditfool.university_spring.dto.response.StudentListResponse;
@@ -15,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class StudentServiceImpl extends CommonCrudServiceImpl<Student, StudentListResponse> implements StudentService {
+public class StudentServiceImpl extends CommonCrudServiceImpl<Student> implements StudentService {
 
     private final StudentRepository studentRepository;
     private final RepositoryValidator<Student> studentRepositoryValidator;
@@ -28,6 +30,19 @@ public class StudentServiceImpl extends CommonCrudServiceImpl<Student, StudentLi
     @Override
     public RepositoryValidator<Student> getRepositoryValidator() {
         return this.studentRepositoryValidator;
+    }
+
+    @Override
+    public Page<StudentListResponse> getAllForListResponse(int page, int size) {
+        return getRepository().findAllListByDeletedAtIsNull(PageRequest.of(page - 1, size));
+    }
+
+    @Override
+    public Page<StudentListResponse> getAllForListResponse(int page, int size, boolean isActive) {
+        if (isActive) {
+            return getAllForListResponse(page, size);
+        }
+        return getRepository().findAllListByDeletedAtIsNotNull(PageRequest.of(page - 1, size));
     }
 
     @Override

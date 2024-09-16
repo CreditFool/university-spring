@@ -5,14 +5,14 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
-public interface CommonCrudService<T, R> {
+public interface CommonCrudService<T> {
     List<T> getAll();
 
     List<T> getAll(boolean isActive);
 
-    Page<R> getAll(int page, int size);
+    Page<T> getAll(int page, int size);
 
-    Page<R> getAll(boolean isActive, int page, int size);
+    Page<T> getAll(boolean isActive, int page, int size);
 
     T getById(UUID id);
 
