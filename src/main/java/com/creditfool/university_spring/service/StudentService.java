@@ -1,27 +1,35 @@
 package com.creditfool.university_spring.service;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import com.creditfool.university_spring.dto.StudentDto;
 import com.creditfool.university_spring.entity.Student;
 
 @Service
 public interface StudentService {
-    public List<Student> getAllStudent();
 
-    public List<Student> getAllStudent(boolean isActive);
+    List<Student> getAll();
 
-    public Student getStudentById(String id, boolean getNotActive);
+    List<Student> getAll(boolean isActive);
 
-    public Student getStudentByNim(String nim);
+    Page<Student> getAll(int page, int size);
 
-    public Student createStudent(StudentDto teacherDto);
+    Page<Student> getAll(boolean isActive, int page, int size);
 
-    public Student updateStudent(String id, StudentDto updatedStudent);
+    Student getById(UUID id);
 
-    public void deleteStudent(String id);
+    Student getById(UUID id, boolean mustActive);
 
-    public void deleteStudent(String id, boolean isHardDelete);
+    Student create(Student data);
+
+    Student update(UUID id, Student updatedData);
+
+    Student updatePartial(UUID id, Student updatedData);
+
+    void delete(UUID id);
+
+    void delete(UUID id, boolean isSoftDelete);
 }

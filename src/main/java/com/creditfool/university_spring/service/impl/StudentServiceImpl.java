@@ -1,141 +1,122 @@
 package com.creditfool.university_spring.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.creditfool.university_spring.dto.StudentDto;
 import com.creditfool.university_spring.entity.Student;
-import com.creditfool.university_spring.exception.DataAlreadyExistException;
 import com.creditfool.university_spring.exception.DataNotFoundException;
 import com.creditfool.university_spring.repository.StudentRepository;
 import com.creditfool.university_spring.service.StudentService;
-import com.creditfool.university_spring.util.UUIDValidator;
+import com.creditfool.university_spring.util.RepositoryValidator;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
 
-    private final StudentRepository repository;
-
-    private final DataNotFoundException studentNotFoundException = new DataNotFoundException("Student not found");
+    private final StudentRepository studentRepository;
+    private final RepositoryValidator repositoryValidator;
 
     @Override
-    public Student createStudent(StudentDto studentDto) {
-        validateStudentData(studentDto);
-        Student student = dtoToEntity(studentDto);
-        return repository.save(student);
+    public Student create(Student data) {
+        repositoryValidator.validate(data);
+        return studentRepository.save(data);
     }
 
     @Override
-    public void deleteStudent(String id) {
-        Student student = getStudentById(id, false);
-        student.setIsActive(false);
-        repository.save(student);
+    public void delete(UUID id) {
+        Student studentData = getById(id, true);
+        studentData.setDeletedAt(LocalDateTime.now());
+        studentRepository.save(studentData);
     }
 
-    @Override
-    public void deleteStudent(String id, boolean isHardDelete) {
-        if (isHardDelete) {
-            Student student = getStudentById(id, true);
-            repository.delete(student);
-
+    public void delete(UUID id, boolean isSoftDelete) {
+        if (isSoftDelete) {
+            delete(id);
         } else {
-            deleteStudent(id);
+            studentRepository.deleteById(id);
         }
-
     }
 
     @Override
-    public List<Student> getAllStudent() {
-        return repository.findAll();
+    public List<Student> getAll() {
+        return studentRepository.findAll();
     }
 
     @Override
-    public List<Student> getAllStudent(boolean isActive) {
-        return repository.findByIsActive(isActive);
+    public List<Student> getAll(boolean isActive) {
+        if (isActive) {
+            return studentRepository.findAllByDeletedAtIsNull();
+        }
+        return studentRepository.findAllByDeletedAtIsNotNull();
     }
 
     @Override
-    public Student getStudentById(String id, boolean getNotActive) {
-        if (!UUIDValidator.isValid(id)) {
-            throw studentNotFoundException;
-        }
-        Optional<Student> student = repository.findById(UUID.fromString(id));
-        if (!student.isPresent()) {
-            throw studentNotFoundException;
-        }
-        if (!student.get().getIsActive().booleanValue() && !getNotActive) {
-            throw studentNotFoundException;
-        }
-        return student.get();
+    public Page<Student> getAll(int page, int size) {
+        return studentRepository.findAll(PageRequest.of(page - 1, size));
     }
 
     @Override
-    public Student getStudentByNim(String nim) {
-        Optional<Student> student = repository.findByNim(nim);
-        if (!student.isPresent()) {
-            throw studentNotFoundException;
+    public Page<Student> getAll(boolean isActive, int page, int size) {
+        if (isActive) {
+            return studentRepository.findAllByDeletedAtIsNull(PageRequest.of(page - 1, size));
         }
-        return student.get();
+        return studentRepository.findAllByDeletedAtIsNotNull(PageRequest.of(page - 1, size));
     }
 
     @Override
-    public Student updateStudent(String id, StudentDto updatedStudent) {
-        Student student = getStudentById(id, false);
-        validateStudentData(updatedStudent);
-        if (updatedStudent.firstName() != null) {
-            student.setFirstName(updatedStudent.firstName());
-        }
-        if (updatedStudent.lastName() != null) {
-            student.setLastName(updatedStudent.lastName());
-        }
-        if (updatedStudent.nim() != null) {
-            student.setNim(updatedStudent.nim());
-        }
-        if (updatedStudent.address() != null) {
-            student.setAddress(updatedStudent.address());
-        }
-        if (updatedStudent.phone() != null) {
-            student.setPhone(updatedStudent.phone());
-        }
-        if (updatedStudent.email() != null) {
-            student.setEmail(updatedStudent.email());
-        }
-        repository.save(student);
-        return student;
+    public Student getById(UUID id) {
+        return getById(id, false);
     }
 
-    private void validateStudentData(StudentDto studentDto) {
-        List<Student> activeStudent = getAllStudent(true);
-        for (Student student : activeStudent) {
-            if (student.getId().equals(studentDto.id())) {
-                continue;
-            }
-            if (student.getNim().equals(studentDto.nim())) {
-                throw new DataAlreadyExistException("Student with same nim already exist");
-            }
-            if (student.getEmail().equals(studentDto.email())) {
-                throw new DataAlreadyExistException("Student with same Email already exist");
-            }
-            if (student.getPhone().equals(studentDto.phone())) {
-                throw new DataAlreadyExistException("Student with same Phone Number already exist");
-            }
+    @Override
+    public Student getById(UUID id, boolean mustActive) {
+        if (mustActive) {
+            return studentRepository.findByIdAndDeletedAtIsNull(id)
+                    .orElseThrow(() -> new DataNotFoundException("Data not found"));
         }
+        return studentRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Data not found"));
     }
 
-    private Student dtoToEntity(StudentDto studentDto) {
-        Student student = new Student();
-        student.setFirstName(studentDto.firstName());
-        student.setLastName(studentDto.lastName());
-        student.setNim(studentDto.nim());
-        student.setAddress(studentDto.address());
-        student.setEmail(studentDto.email());
-        student.setPhone(studentDto.phone());
-        return student;
+    @Override
+    public Student update(UUID id, Student updatedData) {
+        Student currentData = getById(id, true);
+        repositoryValidator.validate(updatedData);
+        updatedData.setCreatedAt(currentData.getCreatedAt());
+        updatedData.setUpdatedAt(LocalDateTime.now());
+        return studentRepository.save(updatedData);
     }
+
+    @Override
+    public Student updatePartial(UUID id, Student updatedData) {
+        Student currentData = getById(id, true);
+        repositoryValidator.validate(updatedData);
+        if (updatedData.getFirstName() != null) {
+            currentData.setFirstName(updatedData.getFirstName());
+        }
+        if (updatedData.getLastName() != null) {
+            currentData.setLastName(updatedData.getLastName());
+        }
+        if (updatedData.getAddress() != null) {
+            currentData.setAddress(updatedData.getAddress());
+        }
+        if (updatedData.getEmail() != null) {
+            currentData.setEmail(updatedData.getEmail());
+        }
+        if (updatedData.getPhone() != null) {
+            currentData.setPhone(updatedData.getPhone());
+        }
+        if (updatedData.getNim() != null) {
+            currentData.setNim(updatedData.getNim());
+        }
+        currentData.setUpdatedAt(LocalDateTime.now());
+        return studentRepository.save(currentData);
+    }
+
 }

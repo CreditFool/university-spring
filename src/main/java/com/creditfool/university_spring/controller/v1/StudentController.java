@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.creditfool.university_spring.dto.SearchByIdDto;
-import com.creditfool.university_spring.dto.StudentDto;
+import com.creditfool.university_spring.dto.request.SearchByIdRequest;
+import com.creditfool.university_spring.dto.request.StudentCreateUpdateRequest;
 import com.creditfool.university_spring.entity.Student;
 import com.creditfool.university_spring.service.StudentService;
 
@@ -29,28 +29,29 @@ public class StudentController {
 
     @GetMapping("students")
     public List<Student> getAllStudent() {
-        return studentService.getAllStudent();
+        return studentService.getAll();
     }
 
     @GetMapping("student")
-    public Student getStudentById(@Valid @RequestBody SearchByIdDto dto) {
-        return studentService.getStudentById(dto.id(), false);
+    public Student getStudentById(@Valid @RequestBody SearchByIdRequest request) {
+        return studentService.getById(request.toUUID());
     }
 
     @PostMapping("student")
     @ResponseStatus(HttpStatus.CREATED)
-    public Student createStudent(@Valid @RequestBody StudentDto dto) {
-        return studentService.createStudent(dto);
+    public Student createStudent(@Valid @RequestBody StudentCreateUpdateRequest request) {
+        return studentService.create(request.toStudent());
     }
 
     @PutMapping("student")
-    public Student updateStudent(@Valid @RequestBody StudentDto dto) {
-        return studentService.updateStudent(String.valueOf(dto.id()), dto);
+    public Student updateStudent(@Valid @RequestBody StudentCreateUpdateRequest request) {
+        Student requestEntity = request.toStudent();
+        return studentService.update(requestEntity.getId(), requestEntity);
     }
 
     @DeleteMapping("student")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteStudent(@Valid @RequestBody SearchByIdDto dto) {
-        studentService.deleteStudent(dto.id());
+    public void deleteStudent(@Valid @RequestBody SearchByIdRequest request) {
+        studentService.delete(request.toUUID());
     }
 }
