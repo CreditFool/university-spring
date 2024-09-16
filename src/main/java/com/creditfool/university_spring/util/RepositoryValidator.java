@@ -12,10 +12,16 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class RepositoryValidator {
+public class RepositoryValidator<T> {
     private final StudentRepository studentRepository;
 
-    public void validate(Student student) {
+    public void validate(T data) {
+        if (data instanceof Student) {
+            validateStudent((Student) data);
+        }
+    }
+
+    public void validateStudent(Student student) {
         List<Student> listData = studentRepository.findAllByEmailIgnoreCaseOrPhoneOrNimAndDeletedAtIsNull(
                 student.getEmail(), student.getPhone(), student.getNim());
 
