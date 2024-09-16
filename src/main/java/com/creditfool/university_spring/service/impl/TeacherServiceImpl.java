@@ -3,8 +3,11 @@ package com.creditfool.university_spring.service.impl;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.creditfool.university_spring.dto.response.TeacherListResponse;
 import com.creditfool.university_spring.entity.Teacher;
 import com.creditfool.university_spring.repository.TeacherRepository;
 import com.creditfool.university_spring.service.TeacherService;
@@ -53,5 +56,18 @@ public class TeacherServiceImpl extends CommonCrudServiceImpl<Teacher> implement
         }
         currentData.setUpdatedAt(LocalDateTime.now());
         return repository.save(currentData);
+    }
+
+    @Override
+    public Page<TeacherListResponse> getAllForListResponse(int page, int size) {
+        return getRepository().findAllListByDeletedAtIsNull(PageRequest.of(page - 1, size));
+    }
+
+    @Override
+    public Page<TeacherListResponse> getAllForListResponse(int page, int size, boolean isActive) {
+        if (isActive) {
+            return getAllForListResponse(page, size);
+        }
+        return getRepository().findAllListByDeletedAtIsNotNull(PageRequest.of(page - 1, size));
     }
 }
