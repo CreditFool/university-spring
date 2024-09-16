@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import com.creditfool.university_spring.entity.AuditEntity;
 import com.creditfool.university_spring.entity.Profile;
 import com.creditfool.university_spring.exception.DataNotFoundException;
 import com.creditfool.university_spring.repository.CommonMethodRepository;
@@ -35,7 +36,7 @@ abstract class CommonCrudServiceImpl<T> implements CommonCrudService<T> {
     @Override
     public void delete(UUID id) {
         T data = getById(id, true);
-        ((Profile) data).setDeletedAt(LocalDateTime.now());
+        ((AuditEntity) data).setDeletedAt(LocalDateTime.now());
         getRepository().save(data);
     }
 
@@ -91,8 +92,8 @@ abstract class CommonCrudServiceImpl<T> implements CommonCrudService<T> {
     public T update(UUID id, T updatedData) {
         T currentData = getById(id, true);
         getRepositoryValidator().validate(updatedData);
-        ((Profile) updatedData).setCreatedAt(((Profile) currentData).getCreatedAt());
-        ((Profile) updatedData).setUpdatedAt(LocalDateTime.now());
+        ((AuditEntity) updatedData).setCreatedAt(((AuditEntity) currentData).getCreatedAt());
+        ((AuditEntity) updatedData).setUpdatedAt(LocalDateTime.now());
         return getRepository().save(updatedData);
     }
 }
