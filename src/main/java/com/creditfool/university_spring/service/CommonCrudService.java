@@ -22,8 +22,6 @@ public interface CommonCrudService<T> {
 
     T update(UUID id, T updatedData);
 
-    T updatePartial(UUID id, T updatedData);
-
     void delete(UUID id);
 
     void delete(UUID id, boolean isSoftDelete);

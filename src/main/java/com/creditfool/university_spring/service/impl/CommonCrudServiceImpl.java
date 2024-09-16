@@ -95,10 +95,4 @@ abstract class CommonCrudServiceImpl<T> implements CommonCrudService<T> {
         ((Profile) updatedData).setUpdatedAt(LocalDateTime.now());
         return getRepository().save(updatedData);
     }
-
-    @Override
-    public T updatePartial(UUID id, Object updatedData) {
-        return null;
-    }
-
 }
