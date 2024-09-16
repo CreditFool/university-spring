@@ -13,12 +13,12 @@ import com.creditfool.university_spring.repository.CommonMethodRepository;
 import com.creditfool.university_spring.service.CommonCrudService;
 import com.creditfool.university_spring.util.RepositoryValidator;
 
-abstract class CommonCrudServiceImpl<T> implements CommonCrudService<T> {
+abstract class CommonCrudServiceImpl<T, R> implements CommonCrudService<T, R> {
 
-    protected CommonMethodRepository<T> repository;
+    protected CommonMethodRepository<T, R> repository;
     protected RepositoryValidator<T> repositoryValidator;
 
-    protected CommonMethodRepository<T> getRepository() {
+    protected CommonMethodRepository<T, R> getRepository() {
         return this.repository;
     }
 
@@ -61,12 +61,12 @@ abstract class CommonCrudServiceImpl<T> implements CommonCrudService<T> {
     }
 
     @Override
-    public Page<T> getAll(int page, int size) {
-        return getRepository().findAll(PageRequest.of(page - 1, size));
+    public Page<R> getAll(int page, int size) {
+        return getRepository().findListAll(PageRequest.of(page - 1, size));
     }
 
     @Override
-    public Page<T> getAll(boolean isActive, int page, int size) {
+    public Page<R> getAll(boolean isActive, int page, int size) {
         if (isActive) {
             return getRepository().findAllByDeletedAtIsNull(PageRequest.of(page - 1, size));
         }

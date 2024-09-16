@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.creditfool.university_spring.dto.response.StudentListResponse;
 import com.creditfool.university_spring.entity.Student;
 import com.creditfool.university_spring.repository.StudentRepository;
 import com.creditfool.university_spring.service.StudentService;
@@ -14,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class StudentServiceImpl extends CommonCrudServiceImpl<Student> implements StudentService {
+public class StudentServiceImpl extends CommonCrudServiceImpl<Student, StudentListResponse> implements StudentService {
 
     private final StudentRepository studentRepository;
     private final RepositoryValidator<Student> studentRepositoryValidator;
