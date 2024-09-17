@@ -14,7 +14,7 @@ public record SubjectCreateUpdateRequest(
     public Subject toSubject() {
         return Subject.builder()
                 .id(id)
-                .name(name)
+                .name(name.trim())
                 .build();
     }
 }
