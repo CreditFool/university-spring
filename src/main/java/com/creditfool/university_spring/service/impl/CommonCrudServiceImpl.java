@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import com.creditfool.university_spring.entity.AuditEntity;
-import com.creditfool.university_spring.entity.Profile;
 import com.creditfool.university_spring.exception.DataNotFoundException;
 import com.creditfool.university_spring.repository.CommonMethodRepository;
 import com.creditfool.university_spring.service.CommonCrudService;
