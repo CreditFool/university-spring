@@ -23,6 +23,7 @@ import com.creditfool.university_spring.dto.response.TeacherListResponse;
 import com.creditfool.university_spring.entity.Teacher;
 import com.creditfool.university_spring.mapper.TeacherResponseMapper;
 import com.creditfool.university_spring.service.TeacherService;
+import com.creditfool.university_spring.util.PageAndSizeValidatorUtil;
 import com.creditfool.university_spring.util.ResponseMakerUtil;
 
 import jakarta.validation.Valid;
@@ -43,6 +44,7 @@ public class TeacherController {
             @RequestParam(required = false, defaultValue = "true") boolean isActive
 
     ) {
+        PageAndSizeValidatorUtil.validate(page, size);
         return ResponseMakerUtil.createWithPaging(
                 HttpStatus.OK,
                 "Data fetched",

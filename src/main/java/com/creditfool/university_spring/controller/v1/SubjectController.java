@@ -23,6 +23,7 @@ import com.creditfool.university_spring.dto.response.SubjectResponse;
 import com.creditfool.university_spring.entity.Subject;
 import com.creditfool.university_spring.mapper.SubjectResponseMapper;
 import com.creditfool.university_spring.service.SubjectService;
+import com.creditfool.university_spring.util.PageAndSizeValidatorUtil;
 import com.creditfool.university_spring.util.ResponseMakerUtil;
 
 import jakarta.validation.Valid;
@@ -43,6 +44,7 @@ public class SubjectController {
             @RequestParam(required = false, defaultValue = "true") boolean isActive
 
     ) {
+        PageAndSizeValidatorUtil.validate(page, size);
         return ResponseMakerUtil.createWithPaging(
                 HttpStatus.OK,
                 "Data fetched",
@@ -57,7 +59,7 @@ public class SubjectController {
 
     ) {
         return mapper.toSubjectDetailResponse(
-                subjectService.getById(request.toUUID()),
+                subjectService.getById(request.toUUID(), true),
                 HttpStatus.OK,
                 "Data fetched"
 

@@ -23,6 +23,7 @@ import com.creditfool.university_spring.dto.response.StudentListResponse;
 import com.creditfool.university_spring.entity.Student;
 import com.creditfool.university_spring.mapper.StudentResponseMapper;
 import com.creditfool.university_spring.service.StudentService;
+import com.creditfool.university_spring.util.PageAndSizeValidatorUtil;
 import com.creditfool.university_spring.util.ResponseMakerUtil;
 
 import jakarta.validation.Valid;
@@ -43,7 +44,7 @@ public class StudentController {
             @RequestParam(required = false, defaultValue = "true") boolean isActive
 
     ) {
-
+        PageAndSizeValidatorUtil.validate(page, size);
         return ResponseMakerUtil.createWithPaging(
                 HttpStatus.OK,
                 "Data fetched",
